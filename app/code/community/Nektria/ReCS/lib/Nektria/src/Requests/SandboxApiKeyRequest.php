@@ -1,6 +1,8 @@
 <?php
 
 namespace Nektria\Recs\MerchantApi\Requests;
+use Nektria\Recs\MerchantApi\Exceptions\ApiResponseException;
+use Nektria\Recs\MerchantApi\Responses\ResponseBodyWrapper;
 use Nektria\Recs\MerchantApi\Responses\SandboxApiKeyResponse;
 
 /**
@@ -24,12 +26,18 @@ class SandboxApiKeyRequest extends BaseRequest
 	 * (non-PHPdoc)
 	 * @see BaseRequest::unsafe_execute()
 	 * @return SandboxApiKeyResponse
+	 * @throws ApiResponseException
 	 */	
 	protected function unsafe_execute(array $params)
 	{
-		$response_message = new SandboxApiKeyResponse();
+		$params = $this->mergeRequestSettings($params);
+
+		$response = $this->client->sandboxApiKey($params);
+		$wrapped_response = new ResponseBodyWrapper($response);
+		if( ! $wrapped_response->isSuccessfull())
+			throw new ApiResponseException($response["httpStatus"], $wrapped_response);
+
+		$response_message = $wrapped_response->getContent(SandboxApiKeyResponse::class);
 		return $response_message;
-	
 	}
-	
 }

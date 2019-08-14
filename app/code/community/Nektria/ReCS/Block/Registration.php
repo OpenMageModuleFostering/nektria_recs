@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Sets the block for registration button in the ReCS setup
+ */
 require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
 
 class Nektria_Recs_Block_Registration extends Mage_Adminhtml_Block_System_Config_Form_Field
@@ -21,12 +24,21 @@ class Nektria_Recs_Block_Registration extends Mage_Adminhtml_Block_System_Config
 	   $html = <<<EOT
 <script type="text/javascript">
 function nektria_registration_onload(){
-	$.noConflict();
+	jQuery.noConflict();
 	jQuery("#carriers_nektria_recs_apikey").change(function(){
 		if (this.value != ''){
 			jQuery("#row_carriers_nektria_recs_registration").hide();
 		}else{
 			jQuery("#row_carriers_nektria_recs_registration").show();
+		}
+	});
+
+	jQuery(window).on("message", function(e){
+		var data = e.originalEvent.data;
+
+		if (typeof(data.code) != "undefined" && data.code == "recs"){
+			jQuery("#carriers_nektria_recs_apikey").val(data.apikey);
+			window.registrationpopup.close();
 		}
 	});
 }
@@ -41,8 +53,9 @@ if(typeof(jQuery)== "undefined"){
 }
 
 
+
 </script>
-<input onclick="window.open('$url', '', 'location=no,menubar=no,toolbar=no,width=600,height=400');" type="button" value="$nektria_signup" class="button" />
+<input onclick="window.registrationpopup = window.open('$url', '', 'location=no,menubar=no,toolbar=no,width=600,height=400');" type="button" value="$nektria_signup" class="button" />
 EOT;
 
 	   return $html;

@@ -4,6 +4,7 @@ namespace Nektria\Recs\MerchantApi\Requests;
 
 use Nektria\Recs\MerchantApi\Responses\ResponseBodyWrapper;
 use Nektria\Recs\MerchantApi\Exceptions\ApiResponseException;
+use Nektria\Recs\MerchantApi\Responses\LastMileBestPriceResponse;
 
 /**
  * Get assessment of best price for last mile service
@@ -14,6 +15,8 @@ use Nektria\Recs\MerchantApi\Exceptions\ApiResponseException;
  */
 class LastMileBestPriceRequest extends BaseRequest
 {
+
+
 	/**
 	 * (non-PHPdoc)
 	 * @see \Nektria\Recs\MerchantApiMessages\BaseRequest::execute()
@@ -22,17 +25,15 @@ class LastMileBestPriceRequest extends BaseRequest
 	 */	
 	protected function unsafe_execute(array $params)
 	{
-		//$params = $this->mergeRequestSettings($params);
+		$params = $this->mergeRequestSettings($params);
 		
-		//$response = $this->client->lastMileValidation($params);
-		//$wrapped_response = new ResponseBodyWrapper($response);
-		//if( ! $wrapped_response->isSuccessfull())
-		//	throw new ApiResponseException($response["httpStatus"], $wrapped_response);
-		
-		//$response_message = $wrapped_response->getContent("\\Nektria\\Recs\\MerchantApi\\Responses\\NullResponse");
-		//return $response_message;
+		$response = $this->client->lastMileBestPrice($params);
+		$wrapped_response = new ResponseBodyWrapper($response);
+		if( ! $wrapped_response->isSuccessfull())
+			throw new ApiResponseException($response["httpStatus"], $wrapped_response);
 
-		return new \Nektria\Recs\MerchantApi\Responses\LastMileBestPriceResponse();
+		$response_message = $wrapped_response->getContent(LastMileBestPriceResponse::class);
+		return $response_message;
 	}
 	
 }

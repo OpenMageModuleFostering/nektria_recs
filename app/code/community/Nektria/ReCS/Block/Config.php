@@ -1,7 +1,9 @@
 <?php
 
 require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
-
+/**
+ * Sets the config button in the extension setup
+ */
 class Nektria_Recs_Block_Config extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
 

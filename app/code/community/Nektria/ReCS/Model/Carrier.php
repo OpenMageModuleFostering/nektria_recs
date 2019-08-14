@@ -112,7 +112,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 		$addressChanged = Mage::helper('nektria')->checkChanges($shippingAddress, $lastShippingAddress);
 
 		if ($serviceId && !$addressChanged){
-			$this->log(FALSE, 'Inside to KeepAliveRequest');
+			$this->log(TRUE, 'Inside to KeepAliveRequest');
 
 			$working_service = $recs->keepAlive();
 
@@ -123,7 +123,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 				$recs->validateSecurity(TRUE);
 			}
 		}else{
-			$this->log(FALSE, 'No session serviceID, create service');
+			$this->log(array( $shippingAddress, $lastShippingAddress ), 'No session serviceID, create service');
 
 			//cleans recs session cache
 			$recs->clean();

@@ -78,6 +78,7 @@
                                 if (replacing_strings){
                                             element_replaced.html( nektria_data.total_price.replace('.',replacing_strings[2]) + "&nbsp;" + replacing_strings[4] );
                                 }
+                                jQuery("#nektria_since").hide();
                                 //confirm selection to continue submit
                                 nektriaUserSelection = true;
 
@@ -102,9 +103,9 @@
                                             jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio[name='shipping_method']").prop("checked",false);
                                 });
 
-                                jQuery("#co-shipping-method-form input.radio").not("#s_method_nektria_recs_lastmile").on("click change" ,function(){
+                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile").on("click change" ,function(){
                                 	nektria_recs.hideTimeWindowArea();
-                                            jQuery("#nektriaTimeWindowBT").prop("checked", false);
+                                    jQuery("#nektriaTimeWindowBT").prop("checked", false);
                                 	jQuery("#s_method_nektria_recs_lastmile").prop("checked",false).attr("disabled","disabled");
                                 });
 
@@ -117,6 +118,7 @@
 
                                 if (window.nektriaStringUserSelection){
                                     nektria_recs.updateSelectedWindows( window.nektriaStringUserSelection );
+                                    jQuery("#nektria_since").hide();
                                 }
                             };
                             
@@ -150,7 +152,9 @@
                             }
                             
                             </style>
-                            <script type="text/javascript">gomage_lightCheckout = true; </script>
+                            <script type="text/javascript">
+                                gomage_lightCheckout = true;
+                            </script>
                         <?php else: ?>
                             <style type="text/css">
                                 #nektriaLabel{
@@ -158,6 +162,7 @@
                                 }
                             </style>
                             <script type="text/javascript">
+
                                 var element = jQuery( "#shipping_method-progress-opcheckout" );
                                 if (typeof(element.live)!= "undefined"){
                                     element.live( "DOMNodeInserted DOMNodeRemoved", function( event ) {});
@@ -179,7 +184,7 @@
                         <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
                         <?php endif; ?>
 
-                        <label for="nektriaTimeWindowBT" id="nektriaLabel"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <label for="nektriaTimeWindowBT" id="nektriaLabel"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?> <span id="nektria_since"><?php echo $this->__('since'); ?></span> 
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
                         <?php echo $_excl; ?>
@@ -279,6 +284,13 @@
             }
        });
     });
+
+    <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()):   ?>
+    //Add address to ajax send
+    //These variables are used in lightcheckout.js method for linking options
+    observe_billing_items += ", #billing_street1, #billing_street2";
+    observe_shipping_items +=", #shipping_street1, #shipping_street2";
+    <?php endif; ?>
 //]]>
 </script>
 <style type="text/css">

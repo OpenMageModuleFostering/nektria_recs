@@ -251,8 +251,9 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	public function checkDemoFlag(){
-		$sTest = Mage::getStoreConfig('design/head/demonotice');
-		if ($sTest == '1'){
+		$sTestDefault = Mage::getStoreConfig('design/head/demonotice');
+
+		if ($sTestDefault){
 			return TRUE;
 		}else{
 			return FALSE;

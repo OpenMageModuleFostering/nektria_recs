@@ -223,7 +223,7 @@ class NektriaSdk{
 			
 		//Saving service_id in the session 
 		$this->id = $this->lastResponse->getServiceNumber();
-		Mage::getSingleton('checkout/session')->getNektriaLastShippingAddress( serialize( $nektriaParams['destination_address'] ));
+		Mage::getSingleton('checkout/session')->setNektriaLastShippingAddress( serialize( $nektriaParams['destination_address'] ));
 		Mage::getSingleton('checkout/session')->setNektriaServiceNumber($this->id);
 		Mage::getSingleton('checkout/session')->setNektriaServiceType( $this->lastResponse->getServiceType() );
 		Mage::getSingleton('checkout/session')->setNektriaLastPostalCode($nektriaParams['destination_address']['postal_code']);
@@ -558,6 +558,22 @@ class NektriaSdk{
 		return $api_key;
 	}
 
+	/**
+	 * Check the API Key with the service
+	 */
+	function testRequest(&$returnCode = NULL){
+		try {
+			$request = new Nektria\Recs\MerchantApi\Requests\TestRequest( $this->getOptions() );
+		    $response = $request->execute();
+		} catch (Exception $e) {
+		    $this->lastError = $e;
+			$this->log($e->getCode().$e->getMessage(), 'testRequest ERROR');
+			$returnCode = $e->getCode();
+			return FALSE;
+		}
+
+		return TRUE;
+	}
 
 	/* ---------------------------------------------------------- HELPER ----------------------------------------------------------- */
 

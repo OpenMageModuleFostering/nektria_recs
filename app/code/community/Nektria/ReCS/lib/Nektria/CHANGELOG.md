@@ -17,6 +17,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### To Fix
 - Work with a tag an not a helper to display html. Full html should be initialized via javascript.
 
+## [1.1.15] - 2015-12-16
+### Added
+- SandboxApiKey Request, LastMileBestPrice Request and CoverageRequest now get values from API calls.
+
 ## [1.1.14] - 2015-12-10
 ### Added
 - SandboxApiKey Request and Response to retrieve a test api key

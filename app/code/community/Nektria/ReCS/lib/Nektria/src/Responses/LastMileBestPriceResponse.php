@@ -4,35 +4,46 @@ namespace Nektria\Recs\MerchantApi\Responses;
 
 use Nektria\Recs\MerchantApi\Exceptions\ApiClientException;
 use Nektria\Recs\MerchantApi\Price;
-use Nektria\Recs\MerchantApi\TimeWindow;
 
 class LastMileBestPriceResponse
-{		
-	//private $best_price;
-	//private $best_price_currency;
-	
-	public function getBestPrice(){ return 12.49; }
-	public function getBestPriceCurrency(){ return "EUR"; }
-	public function getBestPriceCurrencySign(){ return "€"; }
+{
+	private $price;
+
+	public function getPrice(){ return $this->price; }
+
+	/**
+	 * @deprecated use getPrice to retrieve price object instead
+	 * @return float
+	 */
+	public function getBestPrice(){ return $this->price->getAmount(); }
+
+	/**
+	 * @deprecated use getPrice to retrieve price object instead
+	 * @return string
+	 */
+	public function getBestPriceCurrency(){ return $this->price->getCurrencyCode(); }
+
+	/**
+	 * @deprecated use getPrice to retrieve price object instead
+	 * @return string
+	 */
+	public function getBestPriceCurrencySign(){ return $this->price->getCurrencySign(); }
 	
 	/**
-	 * Instanciate message variables
+	 * Instantiate message variables
 	 * @param string $content in json format or array format
 	 * @throws ApiClientException
 	 */
 	public function __construct($content=null)
 	{
-		//if(is_string($content))
-		//	$a_content = json_decode($content, true);
-		//else
-		//	$a_content = $content;
+		if(is_string($content))
+			$a_content = json_decode($content, true);
+		else
+			$a_content = $content;
 	
-		//if(is_null($a_content))
-		//	throw new ApiClientException("Incorrect Json Format in InAndOut message response");
+		if(is_null($a_content))
+			throw new ApiClientException("Incorrect Json Format in LastMileBestPrice message response");
 		
-		//$this->price = new Price($a_content["total_price"], $a_content["currency_code"]);
-		//$this->delivery_windows = array();
-		//foreach($a_content["delivery_windows"] as $a_window)
-		//	$this->delivery_windows[] = new TimeWindow($a_window);
+		$this->price = new Price($a_content["price"], $a_content["currency_code"]);
 	}
 }

@@ -163,8 +163,7 @@ $response = $scr->execute([
 					"products" => $basket->getProductsDetails()
 ]);
 
-$best_price = $response->getBestPrice();
-$best_price_currency = $response->getBestPriceCurrency();
+$best_price = $response->getPrice();
 ```
 ...
 

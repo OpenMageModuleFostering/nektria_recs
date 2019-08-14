@@ -17,3 +17,10 @@
 "Nektria Signup","Registro"
 "Nektria Configuration","Configuración"
 "Display ReCS: LastMile by default","Mostrar ReCS: elige día y hora por defecto"
+"Service status","Estado del servicio"
+"Production environment","Entorno de producción"
+"service configured correctly","servicio configurado correctamente",
+"error connecting to the service, check it the API Key","error en la conexión al servicio, compruebe su API Key"
+"error connecting to the service","error en la conexión al servicio"
+"since","desde"
+"Your site is in demo mode, ReCS is blocked in sandbox mode","Su sitio está en modo demo, ReCS está bloqueado en modo pruebas"

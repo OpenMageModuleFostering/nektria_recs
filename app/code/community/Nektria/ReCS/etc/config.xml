@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Nektria_ReCS>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 		</Nektria_ReCS>
 	</modules>
 
@@ -11,8 +11,8 @@
 			<recs>
 				<use>standard</use>
 				<args>
-					<module>Nektria</module>
-					<frontName>ReCS</frontName>
+					<module>Nektria_ReCS</module>
+					<frontName>recs</frontName>
 				</args>
 			</recs>
 		</routers>
