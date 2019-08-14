@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/Nektria_ReCS",
+    "type": "magento-module",
+    "license": "LGPL",
+    "homepage": "",
+    "description": "Let your customers choose the day and time they will receive their order.",
+    "authors": [
+    {
+        "name": "Digio Soluciones Digitales",
+        "email": "jose@digio.es"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

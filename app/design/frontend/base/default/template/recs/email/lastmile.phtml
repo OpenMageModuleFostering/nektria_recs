@@ -1,0 +1,38 @@
+<?php
+	$json = Mage::getSingleton('checkout/session')->getNektriaUserSelection(FALSE);
+	
+	if ($json){
+		try{
+			$selectedTime = Mage::helper('core')->jsonDecode($json);
+		}catch(Exception $e){
+			$selectedTime = array();
+		}
+	}
+?>
+
+<?php if ($json): ?>
+<style type="text/css">
+	.nektria_user_selection ul li{
+		list-style: none;
+	}
+	.nektria_user_selection{
+		margin-top: 10px;
+		font-size: 0.95em;
+	}
+</style>
+<div class="nektria_user_selection">
+	<?php echo $this->__('Selected delivery'); ?><br />
+	<ul>
+	<?php foreach ($selectedTime['validation_windows'] as $selectedDate): ?>
+		<li><?php 
+			echo $this->__('from').
+				': '.Mage::getModel('core/date')->date('h:i', strtotime($selectedDate['start_time'])).
+				' '.Mage::helper('nektria')->_('to').
+				': '.Mage::getModel('core/date')->date('h:i', strtotime($selectedDate['end_time'])).
+				' '.Mage::helper('nektria')->_('for').
+				': '.Mage::getModel('core/date')->date('d/m/y', strtotime($selectedDate['end_time'])); 
+				?></li>
+	<?php endforeach ?>
+	</ul>
+</div>
+<?php endif; ?>

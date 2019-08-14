@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+    </default>
+
+    <!-- Main template for collectCarrier -->
+    <checkout_onepage_shippingmethod> 
+        <reference name="root">
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/shipping_method/available.phtml</template> 
+            </action> 
+        </reference> 
+    </checkout_onepage_shippingmethod> 
+
+    <!-- Below templates only works for right ajax panel in OnePage Checkout -->
+    <checkout_onepage_index>
+    	<reference name="shippingmethod.progress">
+    	    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+    	        <template>recs/progress/shipping_method.phtml</template> 
+    	    </action> 
+    	</reference> 
+
+        <reference name='checkout.onepage.shipping_method.available'>
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/shipping_method/available.phtml</template>
+            </action>
+        </reference>
+    </checkout_onepage_index>
+
+    <gomage_checkout_onepage_index>
+            <reference name='checkout.onepage.shipping_method.available'>
+                    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                        <template>recs/shipping_method/available.phtml</template>
+                    </action>
+                </reference>
+    </gomage_checkout_onepage_index>
+
+    <gomage_checkout_onepage_methods>
+            <reference name='checkout.onepage.shipping_method.available'>
+                    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                        <template>recs/shipping_method/available.phtml</template>
+                    </action>
+                </reference>
+    </gomage_checkout_onepage_methods>
+    
+
+    <checkout_onepage_progress>
+    	<reference name="shippingmethod.progress">
+	    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+	        <template>recs/progress/shipping_method.phtml</template> 
+	    </action> 
+	</reference> 
+    </checkout_onepage_progress>
+
+    <checkout_onepage_progress_shipping_method>
+    	<reference name="root">
+	    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+	        <template>recs/progress/shipping_method.phtml</template> 
+	    </action> 
+	</reference> 
+    </checkout_onepage_progress_shipping_method>
+
+    <checkout_onepage_review>
+        <reference name="checkout.onepage.review.info.totals">
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/totals/onepage.phtml</template> 
+            </action> 
+        </reference>
+    </checkout_onepage_review>
+
+    <gomage_checkout_onepage_index>
+        <reference name="checkout.onepage.review.info.totals">
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/totals/gomage.phtml</template> 
+            </action> 
+        </reference>
+    </gomage_checkout_onepage_index>
+
+    <gomage_checkout_onepage_review>
+        <reference name="checkout.onepage.review.info.totals">
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/totals/gomage.phtml</template> 
+            </action> 
+        </reference>
+    </gomage_checkout_onepage_review>
+
+    <checkout_onepage_success>
+        <reference name="order_totals">
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/totals/success.phtml</template> 
+            </action> 
+        </reference>
+    </checkout_onepage_success>
+</layout> 

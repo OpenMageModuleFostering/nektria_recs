@@ -1,0 +1,293 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php /** @var $this Mage_Checkout_Block_Onepage_Shipping_Method_Available */ ?>
+<?php $_shippingRateGroups = $this->getShippingRates(); ?>
+<?php if (!$_shippingRateGroups): ?>
+    <p><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></p>
+<?php else: ?>
+    <dl class="sp-methods">
+    <?php $shippingCodePrice = array(); ?>
+    <?php $_sole = count($_shippingRateGroups) == 1; foreach ($_shippingRateGroups as $code => $_rates): ?>
+        <?php if ( $this->getCarrierName($code) !== 'nektria_recs' ) : ?>
+        <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
+        <?php endif; ?>
+        <dd>
+            <ul>
+            <?php $_sole = $_sole && count($_rates) == 1; foreach ($_rates as $_rate): ?>
+                <?php $shippingCodePrice[] = "'".$_rate->getCode()."':".(float)$_rate->getPrice(); ?>
+                <li>
+                   <?php if ($_rate->getErrorMessage()): ?>
+                    <ul class="messages"><li class="error-msg"><ul><li><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li></ul></li></ul>
+
+                   <!-- En caso de que el método lastmile esté disponible -->
+                   <?php elseif ($_rate->getMethod() == "lastmile") : ?>
+                        <script type="text/javascript">
+                            if(typeof(jQuery)== "undefined"){
+                                var script = document.createElement("script");
+                                script.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js";
+                                script.onload = function(){ jQuery.noConflict(); }
+                                document.getElementsByTagName('head')[0].appendChild(script);
+                            }
+                        </script>
+                        <?php 
+                            //Cargamos el código javascript, html y css para el widget de Nektria
+                            $html_code = Mage::getSingleton('checkout/session')->getNektriaHtml();
+                            Mage::getSingleton('checkout/session')->unsNektriaHtml();
+                            $js_code = Mage::getSingleton('checkout/session')->getNektriaJs();
+                            Mage::getSingleton('checkout/session')->unsNektriaJs();
+                            $css_code = Mage::getSingleton('checkout/session')->getNektriaCss();
+                            Mage::getSingleton('checkout/session')->unsNektriaCss();
+                        ?>
+                        
+                        <script type="text/javascript">
+                            
+                            var nektriaUserSelection = false;
+                            var gomage_lightCheckout = false;
+
+                            function nektria_selection_callback(userSelection, totalPrice){
+                                window.nektriaStringUserSelection = userSelection;
+                                jQuery("#nektria_selection").val(userSelection);
+                                nektria_data = JSON.parse(userSelection);
+                                //Update the selected price in the label with currency symbol and decimal separator
+                                element_replaced = jQuery(".price",jQuery("#s_method_nektria_recs_lastmile").parent().next());
+                                replacing_strings = element_replaced.html().match(/(\d+([\.|,])\d+)(\s|&nbsp;)(.*)/);
+                                if (replacing_strings){
+                                            element_replaced.html( nektria_data.total_price.replace('.',replacing_strings[2]) + "&nbsp;" + replacing_strings[4] );
+                                }
+                                //confirm selection to continue submit
+                                nektriaUserSelection = true;
+
+                                jQuery("#s_method_nektria_recs_lastmile").prop("checked",true).removeAttr("disabled");
+                                jQuery("#s_method_nektria_recs_lastmile").click();
+                                if (!gomage_lightCheckout){
+                                    shippingMethod.save();
+                                }                                
+                            }
+                            
+                            <?php if(Mage::getSingleton('checkout/session')->getPriceMatrix()): ?>
+
+                            var jsfile = document.createElement("script");
+
+                            jsfile.setAttribute("type", "text/javascript");
+                            jsfile.setAttribute("src", "<?php echo $js_code; ?>");
+                            
+                            jsfile.onload = function() {
+                                jQuery("#nektriaTimeWindowBT").on("click change", function(){
+                                	nektria_recs.showTimeWindowArea();
+                                	jQuery("#s_method_nektria_recs_lastmile").prop("checked",false).attr("disabled","disabled");
+                                            jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio[name='shipping_method']").prop("checked",false);
+                                });
+
+                                jQuery("#co-shipping-method-form input.radio").not("#s_method_nektria_recs_lastmile").on("click change" ,function(){
+                                	nektria_recs.hideTimeWindowArea();
+                                            jQuery("#nektriaTimeWindowBT").prop("checked", false);
+                                	jQuery("#s_method_nektria_recs_lastmile").prop("checked",false).attr("disabled","disabled");
+                                });
+
+                                jQuery("#s_method_nektria_recs_lastmile").attr("disabled","disabled");
+
+                                nektria_recs.initTimeWindowPrices(<?php echo Mage::getSingleton('checkout/session')->getPriceMatrix(); ?>, nektria_selection_callback);
+                                if (window.showTimeWindowArea){
+                                            nektria_recs.showTimeWindowArea();
+                                }
+
+                                if (window.nektriaStringUserSelection){
+                                    nektria_recs.updateSelectedWindows( window.nektriaStringUserSelection );
+                                }
+                            };
+                            
+                            document.getElementsByTagName("head")[0].appendChild(jsfile);
+                           
+                            var cssfile = document.createElement("link");
+
+                            cssfile.setAttribute("rel", "stylesheet");
+                            cssfile.setAttribute("type", "text/css");
+                            cssfile.setAttribute("href", "<?php echo $css_code; ?>");
+                            
+                            document.getElementsByTagName("head")[0].appendChild(cssfile);
+                            <?php endif; ?>
+                        </script>
+
+                        <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()):   ?>
+                            <style>
+                            /*
+                            .glc-step.address{
+                                	width: 32% !important;
+                            }
+                            .glc-step.methods{
+                             		width: 67% !important;
+                            }
+                            #nektriaTimeWindowBT{
+                            		padding: 2px 5px;
+                            }
+                            */
+                            #recs-timewindow-area.recs-hidden{
+                            		background-color: transparent;
+                            }
+                            
+                            </style>
+                            <script type="text/javascript">gomage_lightCheckout = true; </script>
+                        <?php else: ?>
+                            <style type="text/css">
+                                #nektriaLabel{
+                                    margin-left: 30px;
+                                }
+                            </style>
+                            <script type="text/javascript">
+                                var element = jQuery( "#shipping_method-progress-opcheckout" );
+                                if (typeof(element.live)!= "undefined"){
+                                    element.live( "DOMNodeInserted DOMNodeRemoved", function( event ) {});
+                                }else{
+                                    element.on( "DOMNodeInserted DOMNodeRemoved", function( event ) {});
+                                }
+               		           
+                            </script>
+                        <?php endif; ?>
+                                                
+                        <input type="hidden" name="nektria_selection" id="nektria_selection" value='<?php if( Mage::helper('nektria')->getLastSelection() ) : ?><?php echo Mage::helper('nektria')->getLastSelection(); ?><?php else: ?>{}<?php endif; ?>' />
+                        <input id="nektriaTimeWindowBT" type="radio" value=""  class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> />
+                        <?php if ($_sole) : ?>
+
+                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" disabled="disabled" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
+                        <script type="text/javascript"> window.showTimeWindowArea = true; </script>
+
+                        <?php else: ?>
+                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
+                        <?php endif; ?>
+
+                        <label for="nektriaTimeWindowBT" id="nektriaLabel"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php echo $_excl; ?>
+
+                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                            (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                        <?php endif; ?>
+
+                        </label>
+
+                        <?php if (Mage::getSingleton('checkout/session')->getPriceMatrix()) { 
+                                $ctx = stream_context_create(array(
+                                    'http'=>
+                                    array(
+                                        'timeout' => 1,  //1 seconds
+                                    ),
+                                    'https'=>
+                                    array(
+                                        'timeout' => 2,  //2 seconds in production
+                                    ),
+                                ));
+                                echo file_get_contents($html_code, FALSE, $ctx); 
+                            }
+                        ?>
+                        
+               
+                   <?php elseif ($_rate->getMethod() == "classic") : ?>
+                        <?php if ($_sole) : ?>
+                        <!--<span class="no-display">--><span><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" /></span>
+                        <?php else: ?>
+                        <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio" />
+                        <?php endif; ?>
+                        <label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php echo $_excl; ?>
+                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                            (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                        <?php endif; ?>
+                        </label>
+                   
+                       
+                   <?php else: ?>
+                        <?php if ($_sole) : ?>
+                        <!--<span class="no-display">--><span><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" /></span>
+                        <?php else: ?>
+                        <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio" />
+
+                        <?php if ($_rate->getCode() === $this->getAddressShippingMethod()): ?>
+                        <script type="text/javascript">
+                            //<![CDATA[
+                                lastPrice = <?php echo (float)$_rate->getPrice(); ?>;
+                            //]]>
+                        </script>
+                        <?php endif; ?>
+
+                        <?php endif; ?>
+                        <label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php echo $_excl; ?>
+                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                            (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                        <?php endif; ?>
+                        </label>
+                   <?php endif ?>
+                </li>
+            <?php endforeach; ?>
+            </ul>
+        </dd>
+    <?php endforeach; ?>
+    </dl>
+        
+<script type="text/javascript">
+//<![CDATA[
+    <?php if (!empty($shippingCodePrice)): ?>
+        var shippingCodePrice = {<?php echo implode(',',$shippingCodePrice); ?>};
+    <?php endif; ?>
+
+    $$('input[type="radio"][name="shipping_method"]').each(function(el){
+        Event.observe(el, 'click', function(){
+            if (el.checked == true) {
+                var getShippingCode = el.getValue();
+                <?php if (!empty($shippingCodePrice)): ?>
+                    var newPrice = shippingCodePrice[getShippingCode];
+                    if (!lastPrice) {
+                        lastPrice = newPrice;
+                        quoteBaseGrandTotal += newPrice;
+                    }
+                    if (newPrice != lastPrice) {
+                        quoteBaseGrandTotal += (newPrice-lastPrice);
+                        lastPrice = newPrice;
+                    }
+                <?php endif; ?>
+                checkQuoteBaseGrandTotal = quoteBaseGrandTotal;
+                return false;
+            }
+       });
+    });
+//]]>
+</script>
+<style type="text/css">
+        #gcheckout-shipping-method-available dt{
+        	margin-top: 10px;
+        }
+        #recs-timewindow-area{
+            position: relative;
+            z-index: 30;
+        }
+</style>
+<?php endif; ?>
