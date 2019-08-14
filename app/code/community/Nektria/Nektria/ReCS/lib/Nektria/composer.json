@@ -1,0 +1,44 @@
+{
+	"name" : "nektria/recs-sdk-php",
+	"homepage" : "http://www.recshipping.com",
+	"description" : "Nektria Responsive eCommerce Shipping (ReCS) SDK for PHP",
+	"keywords" : [
+		"recs",
+		"nektria",
+		"sdk",
+		"shipping",
+		"lastmile",
+		"carrier",
+		"ecommerce",
+		"magento"
+	],
+	"type" : "library",
+	"license" : "Apache-2.0",
+	"authors" : [{
+			"name" : "Nektria",
+			"homepage" : "http://www.nektria.com/"
+		}
+	],
+	"require" : {
+		"php" : ">=5.4",
+		"guzzlehttp/guzzle" : "5.3",
+		"guzzlehttp/guzzle-services" : "0.5.*",
+		"guzzlehttp/log-subscriber" : "~1.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "4.*"
+	},
+	"suggest" : {
+		"ext-curl" : "To send requests using cURL"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Nektria\\Recs\\MerchantApi\\" : "src/"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Nektria\\Recs\\MerchantApi\\Test\\" : "tests/"
+		}
+	}
+}

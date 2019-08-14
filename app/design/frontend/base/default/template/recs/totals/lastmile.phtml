@@ -31,9 +31,9 @@
 	<?php foreach ($selectedTime['validation_windows'] as $selectedDate): ?>
 		<li><?php 
 			echo $this->__('from').
-				': '.Mage::getModel('core/date')->date('h:i', strtotime($selectedDate['start_time'])).
+				': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['start_time'])).
 				' '.Mage::helper('nektria')->_('to').
-				': '.Mage::getModel('core/date')->date('h:i', strtotime($selectedDate['end_time'])).
+				': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['end_time'])).
 				' '.Mage::helper('nektria')->_('for').
 				': '.Mage::getModel('core/date')->date('d/m/y', strtotime($selectedDate['end_time'])); 
 				?></li>

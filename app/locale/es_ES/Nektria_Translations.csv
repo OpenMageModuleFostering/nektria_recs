@@ -24,3 +24,5 @@
 "error connecting to the service","error en la conexión al servicio"
 "since","desde"
 "Your site is in demo mode, ReCS is blocked in sandbox mode","Su sitio está en modo demo, ReCS está bloqueado en modo pruebas"
+"Please you must fill the shipping address to enable this option","Debe completar la dirección de envío antes de activar esta opción"
+"Due to problems in the service connection you can not change your selection in this moment\n Please change the shipping method and try again.","Debido a problemas con la conexión al servicio usted no puede cambiar su selección en este momento\n Por favor cambie el método de envío y pruebe de nuevo."

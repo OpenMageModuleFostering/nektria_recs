@@ -133,7 +133,8 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 
 		//checks first if the nektria service is working in serviceCreation and serviceType after
 		$this->log($working_service, 'Working Service' );
-		$currency_code = Mage::app()->getStore()->getCurrentCurrencyCode();
+		//checks if internal currency code is the same then void transaction
+		$currency_code = Mage::app()->getStore()->getBaseCurrencyCode();
 
 		if ($working_service && $shippingAddress['postal_code']=='' && Mage::helper('nektria')->getConfig('lastmiledefault')){
 			//If it's first call and only have country, and no postal code then lastmile by default

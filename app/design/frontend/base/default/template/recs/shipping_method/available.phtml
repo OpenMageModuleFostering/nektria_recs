@@ -65,8 +65,9 @@
                         
                         <script type="text/javascript">
                             
-                            var nektriaUserSelection = false;
+                            var nektriaUserSelection = <?php if( Mage::helper('nektria')->getLastSelection() ) : ?>true<?php else:?>false<?php endif;?>;
                             var gomage_lightCheckout = false;
+                            var nektriaStringUserSelection = '<?php echo Mage::helper('nektria')->getLastSelection(); ?>';
 
                             function nektria_selection_callback(userSelection, totalPrice){
                                 window.nektriaStringUserSelection = userSelection;
@@ -82,6 +83,7 @@
                                 //confirm selection to continue submit
                                 nektriaUserSelection = true;
 
+                                jQuery("#nektriaTimeWindowBT").prop("checked", true);
                                 jQuery("#s_method_nektria_recs_lastmile").prop("checked",true).removeAttr("disabled");
                                 jQuery("#s_method_nektria_recs_lastmile").click();
                                 if (!gomage_lightCheckout){
@@ -97,19 +99,16 @@
                             jsfile.setAttribute("src", "<?php echo $js_code; ?>");
                             
                             jsfile.onload = function() {
-                                jQuery("#nektriaTimeWindowBT").on("click change", function(){
+                                $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
+                                jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
                                 	nektria_recs.showTimeWindowArea();
-                                	jQuery("#s_method_nektria_recs_lastmile").prop("checked",false).attr("disabled","disabled");
-                                            jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio[name='shipping_method']").prop("checked",false);
+                                    e.preventDefault();
                                 });
 
-                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile").on("click change" ,function(){
+                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
                                 	nektria_recs.hideTimeWindowArea();
                                     jQuery("#nektriaTimeWindowBT").prop("checked", false);
-                                	jQuery("#s_method_nektria_recs_lastmile").prop("checked",false).attr("disabled","disabled");
                                 });
-
-                                jQuery("#s_method_nektria_recs_lastmile").attr("disabled","disabled");
 
                                 nektria_recs.initTimeWindowPrices(<?php echo Mage::getSingleton('checkout/session')->getPriceMatrix(); ?>, nektria_selection_callback);
                                 if (window.showTimeWindowArea){
@@ -121,6 +120,16 @@
                                     jQuery("#nektria_since").hide();
                                 }
                             };
+
+                            
+                            jQuery(document).ready(function(){
+                                $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
+                                if (jQuery("#s_method_nektria_recs_lastmile").prop("checked")){
+                                    jQuery("#nektriaTimeWindowBT").prop("checked",true);
+                                }else{
+                                    jQuery("#nektriaTimeWindowBT").prop("checked",false);
+                                }
+                            });                            
                             
                             document.getElementsByTagName("head")[0].appendChild(jsfile);
                            
@@ -131,7 +140,23 @@
                             cssfile.setAttribute("href", "<?php echo $css_code; ?>");
                             
                             document.getElementsByTagName("head")[0].appendChild(cssfile);
+                            <?php else : ?>
+                            
+                            jQuery(document).ready(function(){
+                                $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
+                                jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
+                                    alert("<?php echo $this->__('Please you must fill the shipping address to enable this option'); ?>");
+                                    e.preventDefault();
+                                });
+
+                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
+                                        jQuery("#nektriaTimeWindowBT").prop("checked", false);
+                                    });
+                            });
+                            
                             <?php endif; ?>
+
+
                         </script>
 
                         <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()):   ?>
@@ -174,17 +199,17 @@
                         <?php endif; ?>
                                                 
                         <input type="hidden" name="nektria_selection" id="nektria_selection" value='<?php if( Mage::helper('nektria')->getLastSelection() ) : ?><?php echo Mage::helper('nektria')->getLastSelection(); ?><?php else: ?>{}<?php endif; ?>' />
-                        <input id="nektriaTimeWindowBT" type="radio" value=""  class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> />
+                        <input id="nektriaTimeWindowBT" type="radio" value=""  class="radio" <?php if(Mage::helper('nektria')->getLastSelection()):   ?>checked<?php endif; ?> />
                         <?php if ($_sole) : ?>
 
                         <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" disabled="disabled" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
                         <script type="text/javascript"> window.showTimeWindowArea = true; </script>
 
                         <?php else: ?>
-                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
+                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?> "<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
                         <?php endif; ?>
 
-                        <label for="nektriaTimeWindowBT" id="nektriaLabel"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?> <span id="nektria_since"><?php echo $this->__('since'); ?></span> 
+                        <label for="nektriaTimeWindowBT" id="nektriaLabel"> <span style="font-style:italic;font-weight:bold;">¡Recomendado! </span><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?> <span id="nektria_since"><?php echo $this->__('since'); ?></span> 
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
                         <?php echo $_excl; ?>
@@ -195,18 +220,46 @@
 
                         </label>
 
-                        <?php if (Mage::getSingleton('checkout/session')->getPriceMatrix()) { 
-                                $ctx = stream_context_create(array(
-                                    'http'=>
-                                    array(
-                                        'timeout' => 1,  //1 seconds
-                                    ),
-                                    'https'=>
-                                    array(
-                                        'timeout' => 2,  //2 seconds in production
-                                    ),
-                                ));
-                                echo file_get_contents($html_code, FALSE, $ctx); 
+                        <?php if (Mage::getSingleton('checkout/session')->getPriceMatrix()) {
+                                //check session cache
+                                $cachedIframe = Mage::getSingleton('checkout/session')->getRecsIframe();
+                                if(! $cachedIframe){
+                                    $ctx = stream_context_create(array(
+                                        'http'=>
+                                        array(
+                                            'timeout' => 2,  //1 seconds
+                                        ),
+                                        'https'=>
+                                        array(
+                                            'timeout' => 2,  //2 seconds in production
+                                        ),
+                                    ));
+                                    $recs_iframe = file_get_contents($html_code, FALSE, $ctx);
+
+                                    if (isset($recs_iframe{1})){ //if we have html contents
+                                        echo $recs_iframe;
+
+                                        Mage::getSingleton('checkout/session')->setRecsIframe($recs_iframe); //saving in cache
+                                    }else{
+                                        ?>
+                        <script type="text/javascript">
+                            jQuery(document).ready(function(){
+                                if ( nektriaUserSelection ){
+                                    jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
+                                        alert("<?php echo $this->__('Due to problems in the service connection you can not change your selection in this moment\n Please change the shipping method and try again.')?>");
+                                        e.preventDefault();
+                                    });
+                                }else{
+                                    jQuery("#nektriaTimeWindowBT, #nektriaLabel").hide();
+                                }
+                            });                            
+                        </script>
+                                        <?php
+                                    }                                    
+                                }else{
+                                    echo $cachedIframe;
+                                }
+                                unset($cachedIframe);            
                             }
                         ?>
                         
