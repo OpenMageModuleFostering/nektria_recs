@@ -41,23 +41,23 @@
     },
     {
         "name": "react/promise",
-        "version": "v2.4.0",
-        "version_normalized": "2.4.0.0",
+        "version": "v2.4.1",
+        "version_normalized": "2.4.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/reactphp/promise.git",
-            "reference": "f942da7b505d1a294284ab343d05df42d02ad6d9"
+            "reference": "8025426794f1944de806618671d4fa476dc7626f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/reactphp/promise/zipball/f942da7b505d1a294284ab343d05df42d02ad6d9",
-            "reference": "f942da7b505d1a294284ab343d05df42d02ad6d9",
+            "url": "https://api.github.com/repos/reactphp/promise/zipball/8025426794f1944de806618671d4fa476dc7626f",
+            "reference": "8025426794f1944de806618671d4fa476dc7626f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.4.0"
         },
-        "time": "2016-03-31 13:10:33",
+        "time": "2016-05-03 17:50:52",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -403,17 +403,17 @@
     },
     {
         "name": "nektria/recs-sdk-php",
-        "version": "v1.2.3",
-        "version_normalized": "1.2.3.0",
+        "version": "v1.2.4",
+        "version_normalized": "1.2.4.0",
         "source": {
             "type": "git",
             "url": "https://bitbucket.org/nektria/merchant-api-client.git",
-            "reference": "457850de64ab3ab8112c841de49e95a052785514"
+            "reference": "e0998f03bf347b40c70ba28aaa4a1708c8b50777"
         },
         "dist": {
             "type": "zip",
-            "url": "https://bitbucket.org/nektria/merchant-api-client/get/457850de64ab3ab8112c841de49e95a052785514.zip",
-            "reference": "457850de64ab3ab8112c841de49e95a052785514",
+            "url": "https://bitbucket.org/nektria/merchant-api-client/get/e0998f03bf347b40c70ba28aaa4a1708c8b50777.zip",
+            "reference": "e0998f03bf347b40c70ba28aaa4a1708c8b50777",
             "shasum": ""
         },
         "require": {
@@ -428,7 +428,7 @@
         "suggest": {
             "ext-curl": "To send requests using cURL"
         },
-        "time": "2016-04-22 12:53:34",
+        "time": "2016-05-06 18:05:42",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
