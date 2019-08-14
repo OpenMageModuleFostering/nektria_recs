@@ -47,10 +47,7 @@
                    <?php elseif ($_rate->getMethod() == "lastmile") : ?>
                         <script type="text/javascript">
                             if(typeof(jQuery)== "undefined"){
-                                var script = document.createElement("script");
-                                script.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js";
-                                script.onload = function(){ jQuery.noConflict(); }
-                                document.getElementsByTagName('head')[0].appendChild(script);
+                               document.write('<script type="text/javascript" onload="jQuery.noConflict();" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></scri'+'pt>');
                             }
                         </script>
                         <?php 
@@ -159,19 +156,8 @@
 
                         </script>
 
-                        <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()):   ?>
+                        <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()): ?>
                             <style>
-                            /*
-                            .glc-step.address{
-                                	width: 32% !important;
-                            }
-                            .glc-step.methods{
-                             		width: 67% !important;
-                            }
-                            #nektriaTimeWindowBT{
-                            		padding: 2px 5px;
-                            }
-                            */
                             #recs-timewindow-area.recs-hidden{
                             		background-color: transparent;
                             }
@@ -181,9 +167,15 @@
                                 gomage_lightCheckout = true;
                             </script>
                         <?php else: ?>
-                            <style type="text/css">
+                            <style>
+                                <?php if ( Mage::helper('nektria')->checkMagentoVersion('Community','1.9')) : ?>
                                 #nektriaLabel{
                                     margin-left: 30px;
+                                }
+                                <?php endif; ?>
+
+                                #recs-timewindow-area{
+                                    width:100%;
                                 }
                             </style>
                             <script type="text/javascript">
@@ -206,10 +198,10 @@
                         <script type="text/javascript"> window.showTimeWindowArea = true; </script>
 
                         <?php else: ?>
-                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?> "<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
+                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' disabled="disabled" ' ?> class="radio" <?php if(Mage::helper('nektria')->getLastMileSelected()):   ?>checked<?php endif; ?> /></span>
                         <?php endif; ?>
 
-                        <label for="nektriaTimeWindowBT" id="nektriaLabel"> <span style="font-style:italic;font-weight:bold;">¡Recomendado! </span><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?> <span id="nektria_since"><?php echo $this->__('since'); ?></span> 
+                        <label for="nektriaTimeWindowBT" id="nektriaLabel"><span style="font-style:italic;font-weight:bold;">¡Recomendado! </span> <?php echo $this->escapeHtml($_rate->getMethodTitle()) ?> <span id="nektria_since"><?php echo $this->__('since'); ?></span>
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
                         <?php echo $_excl; ?>
@@ -341,8 +333,10 @@
     <?php if(Mage::helper('nektria')->getGomageLightCheckoutEnabled()):   ?>
     //Add address to ajax send
     //These variables are used in lightcheckout.js method for linking options
-    observe_billing_items += ", #billing_street1, #billing_street2";
-    observe_shipping_items +=", #shipping_street1, #shipping_street2";
+    if (typeof(observe_billing_items) != 'undefined'){
+        observe_billing_items += ", #billing_street1, #billing_street2";
+        observe_shipping_items +=", #shipping_street1, #shipping_street2";
+    }
     <?php endif; ?>
 //]]>
 </script>

@@ -28,7 +28,7 @@
 <div class="nektria_user_selection">
 	<?php echo $this->__('Selected delivery'); ?><br />
 	<ul>
-	<?php foreach ($selectedTime['validation_windows'] as $selectedDate): ?>
+	<?php foreach ($selectedTime['delivery_windows'] as $selectedDate): ?>
 		<li><?php 
 			echo $this->__('from').
 				': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['start_time'])).

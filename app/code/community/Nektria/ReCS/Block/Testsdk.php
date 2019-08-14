@@ -2,8 +2,6 @@
 /**
  * Set the block to test configuration in the extension method setup
  */
-require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
-
 class Nektria_Recs_Block_Testsdk extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
 

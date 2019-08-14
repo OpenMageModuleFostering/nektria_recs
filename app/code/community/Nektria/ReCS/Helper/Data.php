@@ -1,7 +1,5 @@
 <?php
 
-require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
-
 class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 {
 	const CONFIG_KEY = 'carriers/nektria_recs';
@@ -9,6 +7,8 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	const ASSETS_VERSION = 1;
 	const CONNECT_TIMEOUT = 1.5;
 	const TIMEOUT = 2;
+
+	const SHIPPINGLOGFILE = 'shipping_nektria.log';
 
 	/**
 	 * Return checkout config value by key and store
@@ -183,6 +183,7 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function checkAllowPaymentMethod($method){
 		if ( in_array( $method, self::getDisabledPaymentMethods() ) ){
+			$this->log($method,'This Payment method is NOT allowed',self::SHIPPINGLOGFILE);
 			return FALSE;
 		}else{
 			return TRUE;
@@ -217,7 +218,16 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @return bool
 	 */
 	public function checkChanges($array1, $array2){
-		$original = count($array1);
+		//Compare serialized arrays helps with multilevel arrays
+
+		if (serialize($array1) !== serialize($array2)){
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+
+		//OLD CODE DEPRECATED
+		/*$original = count($array1);
 		if ($original !== count($array2)){
 			return TRUE;
 		}
@@ -228,6 +238,20 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 			return FALSE;
 		}else{
 			return TRUE;
+		}*/
+	}
+
+	/**
+	 * Check if the edition of magento and version if correct
+	 * @param  string $edition 'Community|Enterprise'
+	 * @param  string $version 'x.x.x.x'
+	 * @return bool          
+	 */
+	public function checkMagentoVersion($edition, $version){
+		if ($edition == Mage::getEdition() && strpos(Mage::getVersion(), $version)===0){
+			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 
@@ -279,7 +303,7 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @return string currency symbol
 	 */
 	public function getCurrencySymbol(){
-		$currency_code = Mage::app()->getStore()->getCurrentCurrencyCode();
+		$currency_code = Mage::app()->getStore()->getBaseCurrencyCode();
 		return Mage::app()->getLocale()->currency( $currency_code )->getSymbol();
 	}
 }

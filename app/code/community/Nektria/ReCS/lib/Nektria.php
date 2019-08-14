@@ -1,6 +1,6 @@
 <?php
 
-require_once('Nektria/vendor/autoload.php');
+require_once('vendor/autoload.php');
 
 class NektriaExtensionException extends Exception{
 	public function getError(){
@@ -77,6 +77,7 @@ class NektriaSdk{
 		Mage::getSingleton('checkout/session')->unsNektriaBackendUrl();
 		Mage::getSingleton('checkout/session')->unsNektriaRegistrationUrl();
 		Mage::getSingleton('checkout/session')->unsNektriaLastShippingAddress();
+		Mage::getSingleton('checkout/session')->unsNektriaLastSubtotal();
 
 		$this->id=NULL;
 		$this->lastResponse=NULL;
@@ -85,6 +86,19 @@ class NektriaSdk{
 		$this->assets=NULL;
 	}
 
+
+	/**
+	 * Get the Subtotal saved in session
+	 * @return string Subtotal
+	 */
+	public function getLastSubtotal(){
+		return Mage::getSingleton('checkout/session')->getNektriaLastSubtotal(FALSE);
+	}
+
+	/**
+	 * Get the LastShipping Address saved in the session
+	 * @return int ServiceID
+	 */
 	public function getLastShippingAddress(){
 		$return = Mage::getSingleton('checkout/session')->getNektriaLastShippingAddress(FALSE);
 
@@ -204,9 +218,9 @@ class NektriaSdk{
 	 */
 	public function createService(array $nektriaParams){
 		//Add cookie session
-		$nektriaParams['session_timeout'] = Mage::helper('nektria')->getSessionTimeout();
+		$nektriaParams['session_timeout'] = intval( Mage::helper('nektria')->getSessionTimeout() );
 		//Add current currency code
-		$nektriaParams['currency_code'] = Mage::app()->getStore()->getCurrentCurrencyCode();
+		$nektriaParams['currency_code'] = Mage::app()->getStore()->getBaseCurrencyCode();
 
 		//Send the request of service Nektria SDK
 		$this->log($nektriaParams,'User and Shipping Address for createService');
@@ -227,7 +241,11 @@ class NektriaSdk{
 		Mage::getSingleton('checkout/session')->setNektriaServiceNumber($this->id);
 		Mage::getSingleton('checkout/session')->setNektriaServiceType( $this->lastResponse->getServiceType() );
 		Mage::getSingleton('checkout/session')->setNektriaLastPostalCode($nektriaParams['destination_address']['postal_code']);
-		Mage::getSingleton('checkout/session')->setNektriaLastCountryCode($nektriaParams['destination_address']['country_code']);	
+		Mage::getSingleton('checkout/session')->setNektriaLastCountryCode($nektriaParams['destination_address']['country_code']);
+		Mage::getSingleton('checkout/session')->setNektriaLastSubtotal($nektriaParams['total_price']);
+
+		$this->log($nektriaParams['total_price'],'Set last subtotal');
+					
 
 		return TRUE;
 	}

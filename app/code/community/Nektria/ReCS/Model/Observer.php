@@ -1,11 +1,29 @@
 <?php
 
-require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
-
 class Nektria_ReCS_Model_Observer
 {
 	protected $_code = 'nektria_recs';
 	private static $logfile = 'shipping_nektria_events.log';
+
+    /**
+     * Add composer autoload before anything is needed
+     */
+    public function add_autoloader()
+    {
+        if (!class_exists('NektriaSdk', false)) {
+            $main_class_path = Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS . 'Nektria.php';
+            try {
+                require_once $main_class_path;
+                //Mage::log('Loading Nektria main class', Zend_Log::DEBUG);
+            } catch (Exception $e) {
+                Mage::log('Nektria ReCS composer autoload not found at '.$main_class_path, Zend_Log::ERR);
+            }
+        }/* else {
+            //Mage::log('Nektria class is ready', Zend_Log::DEBUG);
+        }*/
+
+        return $this;
+    }
 
     /**
      * This method save in session the user selection. Magento refresh shipping rates in each step.
@@ -25,13 +43,17 @@ class Nektria_ReCS_Model_Observer
     	$shipping_method = $address->getShippingMethod();
 
         //Switch with method type
-                
                $recs = new NektriaSdk();
 
     	if ($shipping_method == 'nektria_recs_lastmile'){
-            		//get nektria lastmile selecction
-    		$request = $observer->getRequest();
-    		$pickup = $request->getParam('nektria_selection',false);
+            //get nektria lastmile selecction
+            
+            $request = $observer->getRequest();
+            if (!$request) {
+                $request = $observer->getEvent()->getControllerAction()->getRequest(); // fix magento ligthcheckout 1.9
+            }
+
+            $pickup = $request->getParam('nektria_selection',false);
 
             		//save in session the user selection
     		//If not saved yet then save, ignore in other case
@@ -74,13 +96,14 @@ class Nektria_ReCS_Model_Observer
     		$recs = new NektriaSdk();
 
     		if ($shipping_method == 'nektria_recs_lastmile'){
-                                        //Saves user selection into database
-                                            $lastmile_db = Mage::getModel('nektria_recs/lastmile');
-                                            $lastmile_db->setOrderId( $order_id );
-                                            $lastmile_db->setUserSelection( $recs->getUserSelection() );
-                                            $lastmile_db->save();
+                //Saves user selection into database
+                $lastmile_db = Mage::getModel('nektria_recs/lastmile');
+                $lastmile_db->setOrderId( $order_id );
+                $lastmile_db->setUserSelection( $recs->getUserSelection() );
+                $lastmile_db->setServiceId( $recs->getServiceId() );
+                $lastmile_db->save();
 
-                	            //If selected method and carrier is nektria and lastmile
+                //If selected method and carrier is nektria and lastmile
     			$recs->saveLastMile($order_id);
 
     		}else if ($shipping_method == 'nektria_recs_classic'){

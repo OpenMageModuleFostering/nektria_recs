@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Nektria_ReCS>
-			<version>1.0.3</version>
+			<version>1.0.7</version>
 		</Nektria_ReCS>
 	</modules>
 
@@ -90,8 +90,8 @@
 					<module>Nektria_ReCS</module>
 				</setup>
 				<connection>
-			                    <use>core_setup</use>
-			                </connection>
+					<use>core_setup</use>
+				</connection>
 			</nektria_recs_setup>
 			<nektria_recs_read>
 				<connection>
@@ -107,6 +107,14 @@
 		</resources>
 
 		<events>
+			<resource_get_tablename>
+				<observers>
+					<nektria_recs_shipping>
+						<class>Nektria_ReCS_Model_Observer</class>
+						<method>add_autoloader</method>
+					</nektria_recs_shipping>
+				</observers>
+			</resource_get_tablename>
 			<checkout_controller_onepage_save_shipping_method>
 				<observers>
 					<nektria_recs_shipping>
@@ -116,6 +124,15 @@
 					</nektria_recs_shipping>
 				</observers>
 			</checkout_controller_onepage_save_shipping_method>
+			<controller_action_predispatch_gomage_checkout_onepage_ajax>
+				<observers>
+					<nektria_recs_shipping>
+						<type>singleton</type>
+						<class>Nektria_ReCS_Model_Observer</class>
+						<method>checkout_controller_onepage_save_shipping_method</method>
+					</nektria_recs_shipping>
+				</observers>
+			</controller_action_predispatch_gomage_checkout_onepage_ajax>
 			<checkout_submit_all_after>
 				<observers>
 					<nektria_recs_shipping>
@@ -171,7 +188,7 @@
 			<nektria_recs>
 				<active>1</active>
 				<model>nektria_recs/carrier</model>
-				<title>Recs by Nektria</title>
+				<title>RECShipping by Nektria</title>
 				<sort_order>1</sort_order>
 				<sallowspecific>0</sallowspecific>
 				<!-- default demo apikey -->

@@ -3,8 +3,6 @@
 /**
  * Sets the block for registration button in the ReCS setup
  */
-require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
-
 class Nektria_Recs_Block_Registration extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
 

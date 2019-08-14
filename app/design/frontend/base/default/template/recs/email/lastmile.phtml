@@ -1,16 +1,8 @@
 <?php
-	$json = Mage::getSingleton('checkout/session')->getNektriaUserSelection(FALSE);
-	
-	if ($json){
-		try{
-			$selectedTime = Mage::helper('core')->jsonDecode($json);
-		}catch(Exception $e){
-			$selectedTime = array();
-		}
-	}
+	$selectedTime = $this->getSelection();
 ?>
 
-<?php if ($json): ?>
+<?php if ($selectedTime): ?>
 <style type="text/css">
 	.nektria_user_selection ul li{
 		list-style: none;
@@ -23,16 +15,18 @@
 <div class="nektria_user_selection">
 	<?php echo $this->__('Selected delivery'); ?><br />
 	<ul>
-	<?php foreach ($selectedTime['validation_windows'] as $selectedDate): ?>
-		<li><?php 
-			echo $this->__('from').
-				': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['start_time'])).
-				' '.Mage::helper('nektria')->_('to').
-				': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['end_time'])).
-				' '.Mage::helper('nektria')->_('for').
-				': '.Mage::getModel('core/date')->date('d/m/y', strtotime($selectedDate['end_time'])); 
-				?></li>
-	<?php endforeach ?>
+	<?php if(isset($selectedTime['delivery_windows'])): ?>
+		<?php foreach ($selectedTime['delivery_windows'] as $selectedDate): ?>
+			<li><?php 
+				echo $this->__('from').
+					': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['start_time'])).
+					' '.Mage::helper('nektria')->_('to').
+					': '.Mage::getModel('core/date')->date('H:i', strtotime($selectedDate['end_time'])).
+					' '.Mage::helper('nektria')->_('for').
+					': '.Mage::getModel('core/date')->date('d/m/y', strtotime($selectedDate['end_time'])); 
+					?></li>
+		<?php endforeach ?>
+	<?php endif; ?>
 	</ul>
 </div>
 <?php endif; ?>

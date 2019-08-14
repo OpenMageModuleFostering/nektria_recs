@@ -1,6 +1,5 @@
 <?php
 
-require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
 /**
  * Sets the config button in the extension setup
  */

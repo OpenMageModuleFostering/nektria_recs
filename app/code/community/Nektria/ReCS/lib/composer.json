@@ -1,0 +1,28 @@
+{
+	"name" : "nektria/recs-magento",
+	"homepage" : "http://www.recshipping.com",
+	"description" : "Nektria Responsive eCommerce Shipping (ReCS) for Magento",
+	"keywords" : [
+		"recs",
+		"nektria",
+		"sdk",
+		"shipping",
+		"lastmile",
+		"carrier",
+		"ecommerce",
+		"magento"
+	],
+	"license" : "Apache-2.0",
+	"authors" : [{
+			"name" : "Nektria",
+			"homepage" : "http://www.nektria.com/"
+		}
+	],
+	"require" : {
+		"php" : ">=5.4",
+		"nektria/recs-sdk-php" : "1.*"
+	},
+	"require-dev" : {
+
+	}
+}
