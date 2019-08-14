@@ -404,8 +404,24 @@ __And your are done !__
 
 In the eCommerce config panel, we will see the following options:
 
-- api key
+- api key, plus registration button if no API Key is available
 - sandbox mode
+
+If the API key is left empty, when we are using the Sandbox mode, a default key is assigned automatically by the SDK. In
+ that way, the shipping module can be used to perform tests out of the box, with no need to go through the registration 
+ process. On the other hand, a requests makes it possible to retrieve a valid API Key for testing purposes. This is done 
+ via the SandboxApiKeyRequest, which goes as follow:
+ 
+ ```
+ // Module configuration controller
+ $rar = new Nektria\Recs\MerchantApi\Requests\SandboxApiKeyRequest(
+ 	// no API key is needed
+ );
+ 
+ $response = $rar->execute();
+ 			
+ $api_key = $response->getApiKey();
+ ```
 
 ### Registration link
 

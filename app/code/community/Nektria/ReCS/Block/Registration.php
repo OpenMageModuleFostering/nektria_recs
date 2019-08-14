@@ -29,10 +29,6 @@ function nektria_registration_onload(){
 			jQuery("#row_carriers_nektria_recs_registration").show();
 		}
 	});
-
-	if(jQuery("#carriers_nektria_recs_apikey").val()!=''){
-		jQuery("#row_carriers_nektria_recs_registration").hide();
-	}
 }
 
 if(typeof(jQuery)== "undefined"){

@@ -17,11 +17,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### To Fix
 - Work with a tag an not a helper to display html. Full html should be initialized via javascript.
 
-### [1.1.13] - 2015-11-27
+## [1.1.14] - 2015-12-10
+### Added
+- SandboxApiKey Request and Response to retrieve a test api key
+
+## [1.1.13] - 2015-11-27
 ### Fix
 - in LastMileBestPriceResponse, modified getBestPriceCurrency method to return currency code, and not currency sign. Added other method to get the sign.
 
-### [1.1.12] - 2015-11-27
+## [1.1.12] - 2015-11-27
 ### Fix
 - Set staging environment to herokuapp.com domain instead of nektria.com
 - Refactored Client class

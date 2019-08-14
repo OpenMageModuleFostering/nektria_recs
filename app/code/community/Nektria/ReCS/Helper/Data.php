@@ -1,4 +1,7 @@
 <?php
+
+require_once (Mage::getModuleDir('', 'Nektria_ReCS') . DS . 'lib' . DS .'Nektria.php');
+
 class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 {
 	const CONFIG_KEY = 'carriers/nektria_recs';
@@ -34,13 +37,22 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @return array 	Merged params with defaults
 	 */
 	public function getServiceParams($params){
-		return array_merge( array(
+		$recs = new NektriaSdk();
+
+		$return = array_merge( array(
 			'APIKEY' => self::getConfig('apikey'),
-			'environment'=>(self::getConfig('sandbox'))?'sandbox':'production',
-			//'secure'=>(self::getConfig('sandbox'))?FALSE : TRUE,
+			'environment'=>'production',
 			'timeout' => self::TIMEOUT,
     		'connect_timeout' => self::CONNECT_TIMEOUT
 			), $params );
+
+		//if demo or sandbox then get SandboxKey
+		if (self::getConfig('sandbox') || self::checkDemoFlag()){
+			$return['APIKEY'] = $recs->getSandboxApiKey();
+			$return['environment'] = 'sandbox';
+		}
+
+		return $return;
 	}
 
 	/**
@@ -170,8 +182,6 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @return bool if allow this method for last mile
 	 */
 	public function checkAllowPaymentMethod($method){
-		//Todo: remove this to check allow methods
-		return TRUE;
 		if ( in_array( $method, self::getDisabledPaymentMethods() ) ){
 			return FALSE;
 		}else{
@@ -201,6 +211,27 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	/**
+	 * Returns if array1 is different to array2
+	 * @param  array $array1 
+	 * @param  array $array2 
+	 * @return bool
+	 */
+	public function checkChanges($array1, $array2){
+		$original = count($array1);
+		if ($original !== count($array2)){
+			return TRUE;
+		}
+
+		$result = count(array_intersect($array1, $array2));
+
+		if( $original == $result){
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+	}
+
+	/**
 	 * Helper function for translations
 	 * @param  string $string Traslate to string
 	 * @return string translation
@@ -217,6 +248,15 @@ class Nektria_ReCS_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getSessionTimeout($store = NULL){
 		return Mage::getStoreConfig( 'web/cookie/cookie_lifetime' , $store);
 		
+	}
+
+	public function checkDemoFlag(){
+		$sTest = Mage::getStoreConfig('design/head/demonotice');
+		if ($sTest == '1'){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 
 	/**

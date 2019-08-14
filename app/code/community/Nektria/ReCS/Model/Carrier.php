@@ -94,6 +94,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 		$serviceId = $recs->getServiceId();
 		$service_type = $recs->getServiceType();
 		$lastPostalCode = $recs->getLastPostalCode();
+		$lastShippingAddress = $recs->getLastShippingAddress();
 
 		$this->log($serviceId,'The service ID');
 		$this->log($service_type,'The service type');
@@ -108,7 +109,9 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 		
 		//check if  we have a serviceId, and postal Code and Country code 
 		//hasn't been changed in other  case renew serviceId
-		if ($serviceId && ($lastPostalCode===$shippingAddress['postal_code']) && ($recs->getLastCountryCode() === $shippingAddress['country_code'])){
+		$addressChanged = Mage::helper('nektria')->checkChanges($shippingAddress, $lastShippingAddress);
+
+		if ($serviceId && !$addressChanged){
 			$this->log(FALSE, 'Inside to KeepAliveRequest');
 
 			$working_service = $recs->keepAlive();
@@ -132,7 +135,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 		$this->log($working_service, 'Working Service' );
 		$currency_code = Mage::app()->getStore()->getCurrentCurrencyCode();
 
-		if ($working_service && $shippingAddress['postal_code']==''){
+		if ($working_service && $shippingAddress['postal_code']=='' && Mage::helper('nektria')->getConfig('lastmiledefault')){
 			//If it's first call and only have country, and no postal code then lastmile by default
 			$response = $recs->lastMileBestPriceRequest(array(
 					'destination_address' => $shippingAddress,
@@ -145,7 +148,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 			//if web get postal code, then normal process
 			if ($working_service && $recs->getServiceType() == 'classic'){
 				// Availability - Classic
-				if ($lastPostalCode!=$shippingAddress['postal_code'] || ! $shippingAddress['postal_code']){
+				if ($addressChanged || ! $shippingAddress['postal_code']){
 					//gets request
 					$response = $recs->classicAvailabilityRequest();
 
@@ -162,7 +165,7 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 				}			
 			}else if($working_service && $recs->getServiceType() !== 'unavailable' ){
 				// Availability - Last Mile 
-				if ($lastPostalCode==$shippingAddress['postal_code']){
+				if (!$addressChanged){
 					//gets the cached response
 					$response = $recs->getAvailabilityRequest('lastmile');
 

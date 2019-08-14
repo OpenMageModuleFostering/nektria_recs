@@ -16,8 +16,8 @@ class NektriaSdk{
 	protected $assets = NULL;
 
 	protected $options = array(
-		'APIKEY' => '',
-		'secure' => false,
+		'APIKEY' => '',  //Sandbox key
+		'secure' => true,
 		'environment'=> 'sandbox'
 		);
 	protected $lastResponse = NULL;
@@ -26,6 +26,10 @@ class NektriaSdk{
 
 	public function setOptions(array $options){
 		$this->options = array_merge($this->options, $options);
+
+		if ($this->options['environment'] == 'sandbox'){
+			$this->options['APIKEY'] = $this->getSandboxApiKey();
+		}
 		$this->log($this->options,'setOptions');
 		return TRUE;
 	}
@@ -72,12 +76,23 @@ class NektriaSdk{
 		Mage::getSingleton('checkout/session')->unsCoveredCountries();
 		Mage::getSingleton('checkout/session')->unsNektriaBackendUrl();
 		Mage::getSingleton('checkout/session')->unsNektriaRegistrationUrl();
+		Mage::getSingleton('checkout/session')->unsNektriaLastShippingAddress();
 
 		$this->id=NULL;
 		$this->lastResponse=NULL;
 		$this->lastError=NULL;
 		$this->lastPrice=NULL;
 		$this->assets=NULL;
+	}
+
+	public function getLastShippingAddress(){
+		$return = Mage::getSingleton('checkout/session')->getNektriaLastShippingAddress(FALSE);
+
+		if(!$return){
+			return array();
+		}else{
+			return unserialize($return);
+		}
 	}
 
 	/**
@@ -208,6 +223,7 @@ class NektriaSdk{
 			
 		//Saving service_id in the session 
 		$this->id = $this->lastResponse->getServiceNumber();
+		Mage::getSingleton('checkout/session')->getNektriaLastShippingAddress( serialize( $nektriaParams['destination_address'] ));
 		Mage::getSingleton('checkout/session')->setNektriaServiceNumber($this->id);
 		Mage::getSingleton('checkout/session')->setNektriaServiceType( $this->lastResponse->getServiceType() );
 		Mage::getSingleton('checkout/session')->setNektriaLastPostalCode($nektriaParams['destination_address']['postal_code']);
@@ -499,6 +515,10 @@ class NektriaSdk{
 		return $response;
 	}
 
+	/**
+	 * Get the url for Registration popup
+	 * @return string url
+	 */
 	public function getRegistrationUrl(){
 		if ($return_value = Mage::getSingleton('checkout/session')->getNektriaRegistrationUrl( FALSE ) ){
 			return $return_value;
@@ -518,6 +538,24 @@ class NektriaSdk{
 		Mage::getSingleton('checkout/session')->setNektriaRegistrationUrl( $response );
 
 		return $response;
+	}
+
+	/**
+	 * Get an static API Key for Sandbox
+	 * @return string apikey
+	 */
+	function getSandboxApiKey(){
+		try{
+			$rar = new Nektria\Recs\MerchantApi\Requests\SandboxApiKeyRequest();
+			$response = $rar->execute();
+			$api_key = $response->getApiKey();
+		}catch(Exception $e){
+			$this->lastError = $e;
+			$this->log($e->getCode().$e->getMessage(), 'getSandboxApiKey ERROR');
+			return FALSE;
+		}
+		
+		return $api_key;
 	}
 
 

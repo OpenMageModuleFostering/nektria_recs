@@ -13,7 +13,8 @@ use Nektria\Recs\MerchantApi\Exceptions\ApiResponseException;
 class RegistrationAccessRequest extends BaseRequest
 {
 	/**
-	 * Force empty API key, because Guzzle requires it (but our API does not)
+	 * Force empty API key, because our base client requires it :/
+	 * @param array settings
 	 */
 	public function __construct(array $settings=array())
 	{

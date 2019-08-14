@@ -1,6 +1,7 @@
 <?php
 
 namespace Nektria\Recs\MerchantApi\Requests;
+use Nektria\Recs\MerchantApi\Responses\CoverageResponse;
 
 /**
  * 
@@ -16,7 +17,7 @@ class CoverageRequest extends BaseRequest
 	 */	
 	protected function unsafe_execute(array $params)
 	{
-		$response_message = new \Nektria\Recs\MerchantApi\Responses\CoverageResponse();
+		$response_message = new CoverageResponse();
 		return $response_message;
 	}
 	

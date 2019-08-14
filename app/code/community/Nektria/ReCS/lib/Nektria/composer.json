@@ -1,6 +1,6 @@
 {
 	"name" : "nektria/recs-sdk-php",
-	"homepage" : "http://recs.nektria.com",
+	"homepage" : "http://www.recshipping.com",
 	"description" : "Nektria Responsive eCommerce Shipping (ReCS) SDK for PHP",
 	"keywords" : [
 		"recs",
@@ -9,7 +9,8 @@
 		"shipping",
 		"lastmile",
 		"carrier",
-		"ecommerce"
+		"ecommerce",
+		"magento"
 	],
 	"type" : "library",
 	"license" : "Apache-2.0",

@@ -61,7 +61,7 @@ abstract class BaseRequest
 	
 	/**
 	 * Shoot the request, get response
-	 * @param $params string or array of parameters in the body
+	 * @param array $params string or array of parameters in the body
 	 * @return BaseResponse
 	 */
 	abstract protected function unsafe_execute(array $params);
@@ -72,9 +72,10 @@ abstract class BaseRequest
 	 *
 	 * 			OBSOLETE as we exectue guzzle with option to throw no exception.
 	 * 
-	 * @param string $params json parame ters
+	 * @param array $params array/json parameters
 	 * @return \Nektria\Recs\MerchantApi\Responses\BaseResponse
 	 * @throws ApiClientException
+	 * @throws
 	 */
 	public function execute($params=array())
 	{
