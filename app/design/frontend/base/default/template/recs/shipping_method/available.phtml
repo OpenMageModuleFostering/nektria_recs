@@ -45,11 +45,6 @@
 
                    <!-- En caso de que el método lastmile esté disponible -->
                    <?php elseif ($_rate->getMethod() == "lastmile") : ?>
-                        <script type="text/javascript">
-                            if(typeof(jQuery)== "undefined"){
-                               document.write('<script type="text/javascript" onload="jQuery.noConflict();" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></scri'+'pt>');
-                            }
-                        </script>
                         <?php 
                             //Cargamos el código javascript, html y css para el widget de Nektria
                             $html_code = Mage::getSingleton('checkout/session')->getNektriaHtml();
@@ -68,21 +63,21 @@
 
                             function nektria_selection_callback(userSelection, totalPrice){
                                 window.nektriaStringUserSelection = userSelection;
-                                jQuery("#nektria_selection").val(userSelection);
+                                recs_jq("#nektria_selection").val(userSelection);
                                 nektria_data = JSON.parse(userSelection);
                                 //Update the selected price in the label with currency symbol and decimal separator
-                                element_replaced = jQuery(".price",jQuery("#s_method_nektria_recs_lastmile").parent().next());
+                                element_replaced = recs_jq(".price",recs_jq("#s_method_nektria_recs_lastmile").parent().next());
                                 replacing_strings = element_replaced.html().match(/(\d+([\.|,])\d+)(\s|&nbsp;)(.*)/);
                                 if (replacing_strings){
                                             element_replaced.html( nektria_data.total_price.replace('.',replacing_strings[2]) + "&nbsp;" + replacing_strings[4] );
                                 }
-                                jQuery("#nektria_since").hide();
+                                recs_jq("#nektria_since").hide();
                                 //confirm selection to continue submit
                                 nektriaUserSelection = true;
 
-                                jQuery("#nektriaTimeWindowBT").prop("checked", true);
-                                jQuery("#s_method_nektria_recs_lastmile").prop("checked",true).removeAttr("disabled");
-                                jQuery("#s_method_nektria_recs_lastmile").click();
+                                recs_jq("#nektriaTimeWindowBT").prop("checked", true);
+                                recs_jq("#s_method_nektria_recs_lastmile").prop("checked",true).removeAttr("disabled");
+                                recs_jq("#s_method_nektria_recs_lastmile").click();
                                 if (!gomage_lightCheckout){
                                     shippingMethod.save();
                                 }                                
@@ -97,14 +92,14 @@
                             
                             jsfile.onload = function() {
                                 $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
-                                jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
+                                recs_jq("#nektriaTimeWindowBT").off("click").on("click", function(e){
                                 	nektria_recs.showTimeWindowArea();
                                     e.preventDefault();
                                 });
 
-                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
+                                recs_jq("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
                                 	nektria_recs.hideTimeWindowArea();
-                                    jQuery("#nektriaTimeWindowBT").prop("checked", false);
+                                    recs_jq("#nektriaTimeWindowBT").prop("checked", false);
                                 });
 
                                 nektria_recs.initTimeWindowPrices(<?php echo Mage::getSingleton('checkout/session')->getPriceMatrix(); ?>, nektria_selection_callback);
@@ -114,17 +109,17 @@
 
                                 if (window.nektriaStringUserSelection){
                                     nektria_recs.updateSelectedWindows( window.nektriaStringUserSelection );
-                                    jQuery("#nektria_since").hide();
+                                    recs_jq("#nektria_since").hide();
                                 }
                             };
 
                             
-                            jQuery(document).ready(function(){
+                            recs_jq(document).ready(function(){
                                 $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
-                                if (jQuery("#s_method_nektria_recs_lastmile").prop("checked")){
-                                    jQuery("#nektriaTimeWindowBT").prop("checked",true);
+                                if (recs_jq("#s_method_nektria_recs_lastmile").prop("checked")){
+                                    recs_jq("#nektriaTimeWindowBT").prop("checked",true);
                                 }else{
-                                    jQuery("#nektriaTimeWindowBT").prop("checked",false);
+                                    recs_jq("#nektriaTimeWindowBT").prop("checked",false);
                                 }
                             });                            
                             
@@ -139,15 +134,15 @@
                             document.getElementsByTagName("head")[0].appendChild(cssfile);
                             <?php else : ?>
                             
-                            jQuery(document).ready(function(){
+                            recs_jq(document).ready(function(){
                                 $('nektriaTimeWindowBT').stopObserving('click'); //prototype unbind
-                                jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
+                                recs_jq("#nektriaTimeWindowBT").off("click").on("click", function(e){
                                     alert("<?php echo $this->__('Please you must fill the shipping address to enable this option'); ?>");
                                     e.preventDefault();
                                 });
 
-                                jQuery("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
-                                        jQuery("#nektriaTimeWindowBT").prop("checked", false);
+                                recs_jq("#co-shipping-method-form input.radio, #gcheckout-shipping-method-available input.radio").not("#s_method_nektria_recs_lastmile, #nektriaTimeWindowBT").on("click" ,function(){
+                                        recs_jq("#nektriaTimeWindowBT").prop("checked", false);
                                     });
                             });
                             
@@ -180,7 +175,7 @@
                             </style>
                             <script type="text/javascript">
 
-                                var element = jQuery( "#shipping_method-progress-opcheckout" );
+                                var element = recs_jq( "#shipping_method-progress-opcheckout" );
                                 if (typeof(element.live)!= "undefined"){
                                     element.live( "DOMNodeInserted DOMNodeRemoved", function( event ) {});
                                 }else{
@@ -235,14 +230,14 @@
                                     }else{
                                         ?>
                         <script type="text/javascript">
-                            jQuery(document).ready(function(){
+                            recs_jq(document).ready(function(){
                                 if ( nektriaUserSelection ){
-                                    jQuery("#nektriaTimeWindowBT").off("click").on("click", function(e){
+                                    recs_jq("#nektriaTimeWindowBT").off("click").on("click", function(e){
                                         alert("<?php echo $this->__('Due to problems in the service connection you can not change your selection in this moment\n Please change the shipping method and try again.')?>");
                                         e.preventDefault();
                                     });
                                 }else{
-                                    jQuery("#nektriaTimeWindowBT, #nektriaLabel").hide();
+                                    recs_jq("#nektriaTimeWindowBT, #nektriaLabel").hide();
                                 }
                             });                            
                         </script>

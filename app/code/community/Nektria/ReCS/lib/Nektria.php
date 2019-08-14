@@ -244,9 +244,6 @@ class NektriaSdk{
 		Mage::getSingleton('checkout/session')->setNektriaLastCountryCode($nektriaParams['destination_address']['country_code']);
 		Mage::getSingleton('checkout/session')->setNektriaLastSubtotal($nektriaParams['total_price']);
 
-		$this->log($nektriaParams['total_price'],'Set last subtotal');
-					
-
 		return TRUE;
 	}
 

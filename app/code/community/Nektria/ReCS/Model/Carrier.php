@@ -118,8 +118,10 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 
 		$serviceParams = array( 
 					'services' => ['last-mile', 'classic'],
-					'total_price' => $totals['base_subtotal_with_discount'],
-					//'total_price' => $request->getBaseSubtotalWithDiscount(),
+					'total_price' =>(Mage::helper('nektria')->getGomageLightCheckoutEnabled())? 
+						$request->getPackageValueWithDiscount(): 
+						$totals['base_subtotal_with_discount'], 
+					//'total_price' => $request->getPackageValueWithDiscount(),
 					'shopper' => $user,
 					'destination_address' => $shippingAddress,
 					'products' => $products,
@@ -130,9 +132,15 @@ class Nektria_ReCS_Model_Carrier extends Mage_Shipping_Model_Carrier_Abstract im
 		//check if  we have a serviceId, and postal Code and Country code 
 		//hasn't been changed in other  case renew serviceId
 		$addressChanged = Mage::helper('nektria')->checkChanges($shippingAddress, $lastShippingAddress);
-		$subtotalChanged = Mage::helper('nektria')->checkChanges($totals['base_subtotal_with_discount'], $lastSubtotal);
+		$subtotalChanged = Mage::helper('nektria')->checkChanges(
+			(Mage::helper('nektria')->getGomageLightCheckoutEnabled())? 
+						$request->getPackageValueWithDiscount(): 
+						$totals['base_subtotal_with_discount']
+			, $lastSubtotal
+			);
+		$this->log(array($request->getPackageValueWithDiscount(),$subtotalChanged,$totals['base_subtotal_with_discount'],$lastSubtotal),'Subtotal Changed Warning');
 
-		if ($serviceId && !$addressChanged && !$subtotalChanged){
+		if ($serviceId && !$addressChanged &&  !$subtotalChanged){
 			$this->log(TRUE, 'Inside to KeepAliveRequest');
 
 			$working_service = $recs->keepAlive();

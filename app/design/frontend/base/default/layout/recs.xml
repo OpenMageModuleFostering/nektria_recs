@@ -25,22 +25,30 @@
                 <template>recs/shipping_method/available.phtml</template>
             </action>
         </reference>
+
+        <reference name="head">
+            <action method="addJs"><script>recs/jquery_requirement_noconflict.js</script></action>
+        </reference>
     </checkout_onepage_index>
 
     <gomage_checkout_onepage_index>
-            <reference name='checkout.onepage.shipping_method.available'>
-                    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
-                        <template>recs/shipping_method/available.phtml</template>
-                    </action>
-                </reference>
+        <reference name='checkout.onepage.shipping_method.available'>
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/shipping_method/available.phtml</template>
+            </action>
+        </reference>
+
+        <reference name="head">
+            <action method="addJs"><script>recs/jquery_requirement_noconflict.js</script></action>
+        </reference>
     </gomage_checkout_onepage_index>
 
     <gomage_checkout_onepage_methods>
-            <reference name='checkout.onepage.shipping_method.available'>
-                    <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
-                        <template>recs/shipping_method/available.phtml</template>
-                    </action>
-                </reference>
+        <reference name='checkout.onepage.shipping_method.available'>
+            <action method="setTemplate" ifconfig="carriers/nektria_recs/active"> 
+                <template>recs/shipping_method/available.phtml</template>
+            </action>
+        </reference>
     </gomage_checkout_onepage_methods>
     
 
